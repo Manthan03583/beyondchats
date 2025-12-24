@@ -53,3 +53,10 @@ The `articles` table has the following fields:
     php artisan serve
     ```
 The API will be available at `http://localhost:8000/api`.
+
+## Libraries Used
+
+*   **Laravel Framework:** The core of the application, providing the MVC architecture, API routing, and database management.
+*   **Symfony DOM Crawler:** Used within the `scrape:articles` command to parse HTML and extract article content from web pages.
+*   **Guzzle (via Laravel HTTP Client):** Used to make the HTTP requests to fetch the web pages for scraping.
+*   **Laravel Sanctum:** Provides a lightweight authentication system, although it is not heavily utilized in this specific project configuration.

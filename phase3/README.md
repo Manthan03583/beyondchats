@@ -24,3 +24,11 @@ This directory contains the React application that serves as the frontend for th
     npm start
     ```
 The frontend will be available at `http://localhost:3001`.
+
+## Libraries Used
+
+*   **React:** The core library used for building the user interface components.
+*   **Axios:** Used to make HTTP requests to the Laravel backend (to fetch the list of articles) and the Node.js AI service (to trigger the style transfer).
+*   **Lucide React:** Provides the set of icons used throughout the dashboard for a clean and modern look.
+*   **Tailwind CSS:** A utility-first CSS framework used for all styling, enabling rapid development of the responsive layout.
+*   **React Scripts:** Part of the Create React App toolkit, this library manages the development server, build process, and other configurations.

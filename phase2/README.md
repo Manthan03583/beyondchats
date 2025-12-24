@@ -37,3 +37,13 @@ LARAVEL_API_URL=http://localhost:8000/api
     npm start
     ```
 The AI service will be available at `http://localhost:3000`.
+
+## Libraries Used
+
+*   **Express:** The web framework used to create the API endpoint for processing articles.
+*   **Axios:** Used to make HTTP requests to the Laravel API (to fetch/update articles) and to the Google Search API.
+*   **Cheerio:** Used to parse the HTML from reference articles and extract their text content.
+*   **@google/generative-ai:** The official Google client library to interact with the Gemini 2.5 Flash model for the style transfer.
+*   **CORS:** A middleware to handle Cross-Origin Resource Sharing, allowing the React frontend (on port 3001) to communicate with this service (on port 3000).
+*   **dotenv:** Used to load sensitive API keys and configuration from the `.env` file.
+*   **Nodemon:** A development tool that automatically restarts the server when file changes are detected.
