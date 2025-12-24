@@ -47,7 +47,7 @@ This service orchestrates the core AI functionality of the application.
 
 *   **Contextual Search:** When triggered, it automatically searches Google for high-authority blogs based on the article's title to use as style references.
 *   **Resilient Scraping:** It uses `axios` and `cheerio` to scrape the content from the reference URLs, mimicking browser headers to reduce the chance of being blocked.
-*   **Gemini Integration:** It uses the `gemini-1.5-flash` model to rewrite the original article's content, adopting the tone and style of the scraped reference material.
+*   **Gemini Integration:** It uses the `gemini-2.5-flash` model to rewrite the original article's content, adopting the tone and style of the scraped reference material.
 *   **Workflow (`POST /api/process-article/:id`):**
     1.  Fetches the original article from the Laravel API.
     2.  Searches Google for style references.
@@ -71,11 +71,13 @@ A modern, responsive dashboard built with React and Tailwind CSS.
 
 ---
 
-## 🚀 Getting Started
+# Getting Started
 
 To run the full system, you must start all three services in separate terminals.
 
 ### 1. Backend (Laravel)
+
+This phase requires a local PHP and MySQL environment. XAMPP is a suitable option for this.
 
 ```bash
 # Navigate to the phase1 directory
@@ -84,7 +86,7 @@ cd phase1
 # Install dependencies
 composer install
 
-# Create a MySQL database named `beyondchats_cms`
+# Create a MySQL database named `beyondchats_cms` (e.g., using phpMyAdmin in XAMPP)
 
 # Run database migrations
 php artisan migrate

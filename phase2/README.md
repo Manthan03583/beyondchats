@@ -4,7 +4,7 @@ This directory contains the Node.js/Express application that performs the AI sty
 
 ## Features
 
-*   **AI Style Transfer:** Rewrites articles using a generative AI model.
+*   **AI Style Transfer:** Rewrites articles using a generative AI model (Gemini 2.5 Flash).
 *   **Contextual Search:** Searches Google for relevant style references.
 *   **Web Scraping:** Scrapes the content of reference articles.
 *   **Resilient:** Mimics browser headers to avoid being blocked.
