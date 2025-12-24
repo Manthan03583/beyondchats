@@ -15,6 +15,54 @@ The project is divided into three distinct services that work together:
 3.  **Phase 3: React Frontend (`/phase3`)**
     *   Provides a user-friendly dashboard to view articles, trigger the AI processing, and compare the original and AI-enhanced content.
 
+### Data Flow & Architecture Diagram
+
+```mermaid
+graph TD
+    subgraph User Interaction
+        A[User's Browser]
+    end
+
+    subgraph "Phase 3: Frontend (React @ :3001)"
+        B[React Dashboard]
+    end
+
+    subgraph "Phase 2: AI Service (Node.js @ :3000)"
+        C[Node.js/Express API]
+    end
+
+    subgraph "Phase 1: Backend (Laravel @ :8000)"
+        D[Laravel API]
+        E[MySQL Database]
+        F[Artisan Scraper]
+    end
+
+    subgraph "External Services"
+        G[Google Search API]
+        H[Gemini AI API]
+        I[BeyondChats Blog]
+    end
+
+    A -- "Views Dashboard" --> B
+    B -- "1. Fetches articles" --> D
+    B -- "2. Triggers AI Processing for article ID" --> C
+    
+    C -- "3. Fetches original article content" --> D
+    C -- "4. Searches for style references" --> G
+    C -- "5. Scrapes reference content" --> I
+    C -- "6. Sends content + references for rewrite" --> H
+    H -- "7. Returns AI-styled content" --> C
+    C -- "8. Saves new [AI] article to DB" --> D
+    
+    D -- "Stores/retrieves all article data" --> E
+
+    F -- "Initial scraping" --> I
+    F -- "Saves raw articles" --> D
+    
+    B -- "Refreshes dashboard with new article" --> D
+
+```
+
 ---
 
 ## 🛠 Features & Technical Details
