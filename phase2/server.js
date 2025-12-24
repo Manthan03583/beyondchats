@@ -7,10 +7,6 @@ import 'dotenv/config';
 
 const app = express();
 
-/**
- * 1. CORS CONFIGURATION
- * Handles communication between React (3001) and Node (3000)
- */
 app.use(cors({
     origin: 'http://localhost:3001', 
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -18,14 +14,10 @@ app.use(cors({
     credentials: true
 }));
 
-// Fix for PathError: Use Regex /(.*)/ instead of '*' for wildcard options
 app.options(/(.*)/, cors()); 
 
 app.use(express.json());
 
-/**
- * 2. CONFIGURATION & AI SETUP
- */
 const CONFIG = {
     GOOGLE_SEARCH_KEY: process.env.GOOGLE_SEARCH_KEY,
     GOOGLE_CX: process.env.GOOGLE_CX,
@@ -35,10 +27,6 @@ const CONFIG = {
 
 const genAI = new GoogleGenerativeAI(CONFIG.GEMINI_API_KEY);
 
-/**
- * 3. HELPER: SCRAPE URL
- * Mimics a browser to avoid 403 Forbidden errors
- */
 async function scrapeUrl(url) {
     try {
         const { data } = await axios.get(url, {
@@ -51,31 +39,26 @@ async function scrapeUrl(url) {
         });
         const $ = cheerio.load(data);
         
-        // Clean up unwanted elements
         $('script, style, nav, footer, header, ad').remove();
         
         const text = $('p').text().trim().substring(0, 4000);
         return text.length > 100 ? text : null;
     } catch (error) {
-        console.error(`⚠️ Skipping URL ${url}: ${error.message}`);
+        console.error(` Skipping URL ${url}: ${error.message}`);
         return null;
     }
 }
 
-/**
- * 4. MAIN ROUTE: PROCESS ARTICLE
- */
 app.post('/api/process-article/:id', async (req, res) => {
     const { id } = req.params;
     
     try {
-        console.log(`🚀 Starting AI Processing for Article ID: ${id}`);
+        console.log(`Starting AI Processing for Article ID: ${id}`);
 
-        // A. Fetch original article from Laravel
+        
         const articleRes = await axios.get(`${CONFIG.LARAVEL_API_BASE}/articles/${id}`);
         const article = articleRes.data;
 
-        // B. Search Google for Style References
         const searchQuery = `${article.title} technical guide blog`;
         const searchUrl = `https://www.googleapis.com/customsearch/v1?key=${CONFIG.GOOGLE_SEARCH_KEY}&cx=${CONFIG.GOOGLE_CX}&q=${encodeURIComponent(searchQuery)}`;
         
@@ -92,7 +75,6 @@ app.post('/api/process-article/:id', async (req, res) => {
         
         console.log(`🔗 Found ${links.length} potential references.`);
 
-        // C. Scrape Reference Content
         const scrapedResults = await Promise.all(links.map(url => scrapeUrl(url)));
         const referenceStyles = scrapedResults.filter(content => content !== null);
 
@@ -100,8 +82,7 @@ app.post('/api/process-article/:id', async (req, res) => {
             throw new Error("Reference sites blocked our scraping attempts (403/Timeout).");
         }
 
-        // D. Gemini Style Transfer
-        // Using gemini-1.5-flash as the stable production model
+
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
         
         const prompt = `
@@ -120,12 +101,8 @@ app.post('/api/process-article/:id', async (req, res) => {
         const result = await model.generateContent(prompt);
         const rewrittenText = result.response.text();
 
-        // E. Save to Database (Via Laravel API)
-        
-        // 1. Mark original as processed
         await axios.put(`${CONFIG.LARAVEL_API_BASE}/articles/${id}`, { is_processed: true });
 
-        // 2. Create the new AI-Enhanced version
         const newArticle = await axios.post(`${CONFIG.LARAVEL_API_BASE}/articles`, {
             title: `[AI] ${article.title}`, 
             content: rewrittenText,
@@ -133,7 +110,7 @@ app.post('/api/process-article/:id', async (req, res) => {
             is_processed: true
         });
 
-        console.log(`✅ Successfully created AI version with ID: ${newArticle.data.id}`);
+        console.log(`Successfully created AI version with ID: ${newArticle.data.id}`);
         
         res.status(200).json({ 
             success: true, 
@@ -142,7 +119,7 @@ app.post('/api/process-article/:id', async (req, res) => {
         });
 
     } catch (error) {
-        console.error("❌ Processing Error:", error.message);
+        console.error("Processing Error:", error.message);
         res.status(500).json({ 
             success: false, 
             error: error.message 
@@ -150,9 +127,6 @@ app.post('/api/process-article/:id', async (req, res) => {
     }
 });
 
-/**
- * 5. START SERVER
- */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`

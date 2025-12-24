@@ -14,7 +14,6 @@ const App = () => {
     setLoading(true);
     axios.get(`${API_BASE}/articles`)
       .then(res => { 
-        // Sort articles so newest (AI ones) appear first
         const sorted = res.data.sort((a, b) => b.id - a.id);
         setArticles(sorted); 
         setLoading(false); 
@@ -48,7 +47,7 @@ const App = () => {
         )}
       </div>
 
-      {/* --- MODAL POPUP --- */}
+      
       {selectedArticle && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
@@ -87,7 +86,7 @@ const App = () => {
 const ArticleCard = ({ article, onRefresh, onView }) => {
   const [processing, setProcessing] = useState(false);
   
-  // LOGIC: Check if AI by Title Prefix since we aren't changing DB schema
+  
   const isAI = article.title.startsWith('[AI]');
   const isProcessed = article.is_processed === 1 || article.is_processed === true;
 
@@ -97,17 +96,16 @@ const ArticleCard = ({ article, onRefresh, onView }) => {
     
     setProcessing(true);
     try {
-      // Increased timeout to 60 seconds because Scraping + Gemini takes time
       const res = await axios.post(`${NODE_API_BASE}/process-article/${article.id}`, {}, {
         timeout: 60000 
       });
       
-      alert("✅ AI Processing Complete! A new styled version has been created.");
+      alert(" AI Processing Complete! A new styled version has been created.");
       onRefresh();
     } catch (err) {
       console.error("Processing Error:", err);
       const errorMsg = err.response?.data?.error || "Connection to Node.js server failed. Make sure it's running on port 3000.";
-      alert("❌ Error: " + errorMsg);
+      alert(" Error: " + errorMsg);
     } finally {
       setProcessing(false);
     }
